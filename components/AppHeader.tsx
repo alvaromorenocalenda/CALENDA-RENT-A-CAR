@@ -22,7 +22,8 @@ export default function AppHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const visibleLinks = user ? authenticatedLinks : publicLinks;
+  const visibleLinks = user ? [{ href: "/", label: "Inicio" }, ...authenticatedLinks] : publicLinks;
+  const showClientNav = !!user && !pathname.startsWith("/admin") && pathname !== "/login" && pathname !== "/registro";
   const doLogout = async () => { await logout(); setOpen(false); router.push("/"); };
 
   return (
@@ -40,7 +41,7 @@ export default function AppHeader() {
         </div>
       </div>
       {open && user && <button className="mobile-logout" onClick={doLogout}><LogOut size={17} /> Cerrar sesión</button>}
-      {user && <nav className="client-bottom-nav" aria-label="Navegación principal"><Link href="/" className={pathname === "/" ? "active" : ""}><CarFront size={19} /><span>Inicio</span></Link><Link href="/vehiculos" className={pathname.startsWith("/vehiculos") ? "active" : ""}><CarFront size={19} /><span>Coches</span></Link><Link href="/mis-reservas" className={pathname.startsWith("/mis-reservas") || pathname.startsWith("/reserva/") ? "active" : ""}><CalendarDays size={19} /><span>Reservas</span></Link><Link href="/mi-cuenta" className={pathname.startsWith("/mi-cuenta") ? "active" : ""}><UserRound size={19} /><span>Cuenta</span></Link></nav>}
+      {showClientNav && <nav className="client-bottom-nav" aria-label="Navegación principal"><Link href="/" className={pathname === "/" ? "active" : ""}><CarFront size={19} /><span>Inicio</span></Link><Link href="/vehiculos" className={pathname.startsWith("/vehiculos") ? "active" : ""}><CarFront size={19} /><span>Coches</span></Link><Link href="/mis-reservas" className={pathname.startsWith("/mis-reservas") || pathname.startsWith("/reserva/") ? "active" : ""}><CalendarDays size={19} /><span>Reservas</span></Link><Link href="/mi-cuenta" className={pathname.startsWith("/mi-cuenta") ? "active" : ""}><UserRound size={19} /><span>Cuenta</span></Link></nav>}
     </header>
   );
 }
