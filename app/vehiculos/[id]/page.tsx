@@ -8,6 +8,7 @@ import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/components/AuthProvider";
 import { db } from "@/lib/firebase";
+import { firstCalendaVehicle } from "@/lib/fallbackVehicle";
 import type { Vehicle } from "@/lib/types";
 import { bookingTotal, money, rentalDays } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export default function VehicleDetailPage() {
   const router = useRouter();
   const { user, profile } = useAuth();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [activeImage, setActiveImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [startAt, setStartAt] = useState(searchParams.get("start") || localInputValue());
   const [endAt, setEndAt] = useState(searchParams.get("end") || localInputValue(new Date(Date.now() + 25 * 60 * 60 * 1000)));
@@ -31,8 +33,17 @@ export default function VehicleDetailPage() {
   useEffect(() => {
     (async () => {
       try {
+        if (params.id === firstCalendaVehicle.id) {
+          setVehicle(firstCalendaVehicle);
+          setActiveImage(firstCalendaVehicle.imageUrl || "");
+          return;
+        }
         const snap = await getDoc(doc(db, "vehicles", params.id));
-        if (snap.exists()) setVehicle({ id: snap.id, ...(snap.data() as Omit<Vehicle, "id">) });
+        if (snap.exists()) {
+          const loadedVehicle = { id: snap.id, ...(snap.data() as Omit<Vehicle, "id">) };
+          setVehicle(loadedVehicle);
+          setActiveImage(loadedVehicle.imageUrl || "");
+        }
       } finally { setLoading(false); }
     })();
   }, [params.id]);
@@ -121,13 +132,29 @@ export default function VehicleDetailPage() {
         <div className="container detail-grid">
           <section className="detail-card">
             <div className="detail-image">
-              {vehicle.imageUrl ? (
+              {activeImage || vehicle.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={vehicle.imageUrl} alt={`${vehicle.brand} ${vehicle.model}`} />
+                <img src={activeImage || vehicle.imageUrl} alt={`${vehicle.brand} ${vehicle.model}`} />
               ) : (
                 <div className="vehicle-placeholder"><span>{vehicle.brand}</span><strong>{vehicle.model}</strong></div>
               )}
             </div>
+            {vehicle.galleryImages && vehicle.galleryImages.length > 1 && (
+              <div className="detail-gallery" aria-label={`Fotos de ${vehicle.brand} ${vehicle.model}`}>
+                {vehicle.galleryImages.map((image, index) => (
+                  <button
+                    type="button"
+                    className={image === (activeImage || vehicle.imageUrl) ? "is-active" : ""}
+                    onClick={() => setActiveImage(image)}
+                    aria-label={`Ver foto ${index + 1}`}
+                    key={image}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={image} alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="detail-body">
               <p className="eyebrow">{vehicle.year}</p>
               <h1>{vehicle.brand} {vehicle.model}</h1>
