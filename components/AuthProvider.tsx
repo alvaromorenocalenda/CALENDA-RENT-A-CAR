@@ -26,10 +26,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(null);
       return;
     }
-    const snap = await getDoc(doc(db, "users", currentUser.uid));
-    if (snap.exists()) {
-      setProfile({ uid: currentUser.uid, ...(snap.data() as Omit<UserProfile, "uid">) });
-    } else {
+    try {
+      const snap = await getDoc(doc(db, "users", currentUser.uid));
+      if (snap.exists()) {
+        setProfile({ uid: currentUser.uid, ...(snap.data() as Omit<UserProfile, "uid">) });
+      } else {
+        setProfile({
+          uid: currentUser.uid,
+          name: currentUser.displayName || "Cliente",
+          email: currentUser.email || "",
+          role: "cliente",
+          verificationStatus: "pendiente",
+        });
+      }
+    } catch (error) {
+      console.error("[v0] No se pudo cargar el perfil de Firebase:", error);
       setProfile({
         uid: currentUser.uid,
         name: currentUser.displayName || "Cliente",
