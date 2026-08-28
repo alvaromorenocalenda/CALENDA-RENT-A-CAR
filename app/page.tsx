@@ -28,7 +28,11 @@ export default function HomePage() {
         const loadedVehicles = snap.docs
             .map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) }))
             .filter((vehicle) => vehicle.active !== false);
-        setVehicles(loadedVehicles.length ? loadedVehicles : [firstCalendaVehicle]);
+        const hasC4Cactus = loadedVehicles.some((vehicle) =>
+          vehicle.id === firstCalendaVehicle.id ||
+          `${vehicle.brand} ${vehicle.model}`.toLowerCase().includes("c4 cactus")
+        );
+        setVehicles(hasC4Cactus ? loadedVehicles : [firstCalendaVehicle, ...loadedVehicles].slice(0, 3));
       })
       .catch((error) => {
         console.error("No se pudo cargar la flota destacada:", error);
