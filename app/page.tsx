@@ -10,6 +10,7 @@ import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
 import { db } from "@/lib/firebase";
+import { firstCalendaVehicle } from "@/lib/fallbackVehicle";
 import type { Vehicle } from "@/lib/types";
 
 export default function HomePage() {
@@ -24,13 +25,15 @@ export default function HomePage() {
     getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc"), limit(3)))
       .then((snap) => {
         if (!mounted) return;
-        setVehicles(
-          snap.docs
+        const loadedVehicles = snap.docs
             .map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) }))
-            .filter((vehicle) => vehicle.active !== false)
-        );
+            .filter((vehicle) => vehicle.active !== false);
+        setVehicles(loadedVehicles.length ? loadedVehicles : [firstCalendaVehicle]);
       })
-      .catch((error) => console.error("No se pudo cargar la flota destacada:", error));
+      .catch((error) => {
+        console.error("No se pudo cargar la flota destacada:", error);
+        if (mounted) setVehicles([firstCalendaVehicle]);
+      });
     return () => { mounted = false; };
   }, []);
 
