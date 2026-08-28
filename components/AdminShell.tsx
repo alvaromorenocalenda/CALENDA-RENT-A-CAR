@@ -39,7 +39,7 @@ export default function AdminShell({ children, title, description, action }: { c
       <div className="admin-top">
         <div className="container">
           <Link href="/" className="brand brand-light premium-brand"><span className="brand-mark"><CarFront size={21} /></span><span className="brand-copy"><strong>CALENDA</strong><small>CONTROL CENTER</small></span></Link>
-          <div className="admin-top-actions"><span className="admin-role-chip">Administrador</span><Link href="/" className="btn btn-small btn-light">Ver web pública</Link></div>
+          <div className="header-actions"><span className="user-chip">Administrador</span><Link href="/" className="btn btn-small btn-light">Ver web pública</Link></div>
         </div>
       </div>
       <div className="container admin-main">
@@ -47,7 +47,7 @@ export default function AdminShell({ children, title, description, action }: { c
         <nav className="admin-nav">
           {adminLinks.map(({ href, label, icon: Icon }) => {
             const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
-            return <Link key={href} href={href} className={active ? "active" : ""}><Icon size={15} /> {label}</Link>;
+            return <Link key={href} href={href} style={active ? { background: "var(--navy)", color: "#fff" } : undefined}><Icon size={15} /> {label}</Link>;
           })}
         </nav>
         {children}
