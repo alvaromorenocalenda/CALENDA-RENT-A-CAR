@@ -64,14 +64,14 @@ export default function HomePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={heroVehicle.imageUrl} alt={`${heroVehicle.brand} ${heroVehicle.model}`} />
               ) : (
-                <div className="mobility-visual-placeholder"><strong>Tu próximo coche, listo para reservar.</strong></div>
+                <div className="mobility-visual-placeholder" aria-hidden="true"><span>CALENDA</span><small>RENT A CAR</small></div>
               )}
               {heroVehicle && <span className="mobility-visual-label">{heroVehicle.brand} {heroVehicle.model}</span>}
             </div>
           </div>
         </section>
 
-        <div className="mobility-search-wrap">
+        <div className="mobility-search-wrap" data-reveal>
           <div className="container">
             <div className="mobility-search">
               <div className="field">
@@ -91,7 +91,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <section id="como-funciona" className="mobility-section">
+        <section id="como-funciona" className="mobility-section" data-reveal>
           <div className="container">
             <div className="mobility-section-head">
               <div>
@@ -110,7 +110,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mobility-fleet">
+        <section className="mobility-fleet" data-reveal>
           <div className="container">
             <div className="mobility-section-head">
               <div>
@@ -129,7 +129,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mobility-access">
+        <section className="mobility-access" data-reveal>
           <div className="container mobility-access-grid">
             <div className="mobility-access-copy">
               <p className="label">Todo desde el móvil</p>
@@ -144,7 +144,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mobility-location">
+        <section className="mobility-location" data-reveal>
           <div className="container mobility-location-card">
             <div><h2>Recogida en Higuera la Real.</h2><p>Consulta la ubicación exacta de cada vehículo antes de reservar.</p></div>
             <div className="mobility-location-pin"><MapPin size={28} /></div>
