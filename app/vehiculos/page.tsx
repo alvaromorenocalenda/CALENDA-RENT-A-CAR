@@ -21,8 +21,15 @@ export default function VehiculosPage() {
   const [seats, setSeats] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
 
   useEffect(() => {
+    const initialParams = new URLSearchParams(window.location.search);
+    const requestedCity = initialParams.get("city");
+    if (requestedCity) setCity(requestedCity);
+    setStartAt(initialParams.get("start") || "");
+    setEndAt(initialParams.get("end") || "");
     (async () => {
       try {
         const snap = await getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc")));
@@ -34,6 +41,13 @@ export default function VehiculosPage() {
       }
     })();
   }, []);
+
+  const vehicleQuery = useMemo(() => {
+    const params = new URLSearchParams();
+    if (startAt) params.set("start", startAt);
+    if (endAt) params.set("end", endAt);
+    return params.toString();
+  }, [startAt, endAt]);
 
   const filtered = useMemo(() => vehicles.filter((vehicle) => {
     const text = `${vehicle.brand} ${vehicle.model} ${vehicle.city}`.toLowerCase();
@@ -59,8 +73,8 @@ export default function VehiculosPage() {
 
   return <div className="page premium-page vehicle-results-page"><AppHeader /><main className="vehicle-results-main"><div className="container">
     <header className="vehicle-results-header"><div><p className="eyebrow">Calenda Rent a Car</p><h1>Vehículos disponibles</h1><p>Elige el vehículo que mejor se adapta a tu trayecto.</p></div><div className="vehicle-results-meta"><span>{loading ? "Cargando" : `${filtered.length} resultado${filtered.length === 1 ? "" : "s"}`}</span><button type="button" className="mobile-filter-button" onClick={() => setFiltersOpen(true)}><Filter /> Filtros</button></div></header>
-    <div className="vehicle-search-strip"><label><MapPin /><span>Lugar de recogida</span><select value={city} onChange={(event) => setCity(event.target.value)}><option value="">Todas las ubicaciones</option>{cities.map((value) => <option key={value}>{value}</option>)}</select></label><label><span>Recogida</span><input type="date" aria-label="Fecha de recogida" /></label><label><span>Devolución</span><input type="date" aria-label="Fecha de devolución" /></label><label className="vehicle-search-input"><Search /><span>Buscar modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Marca o modelo" /></label></div>
-    <div className="vehicle-results-layout"><aside className="desktop-filters"><Filters /></aside><section className="vehicle-results-list" aria-live="polite">{loading ? <div className="loading-screen"><div className="loader" /></div> : filtered.length ? <div className="vehicle-results-grid">{filtered.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div> : <div className="vehicle-results-empty"><CarFront /><strong>No hay vehículos disponibles.</strong><button type="button" onClick={clearFilters}>Limpiar filtros</button></div>}</section></div>
+    <div className="vehicle-search-strip"><label><MapPin /><span>Lugar de recogida</span><select value={city} onChange={(event) => setCity(event.target.value)}><option value="">Todas las ubicaciones</option>{cities.map((value) => <option key={value}>{value}</option>)}</select></label><label><span>Recogida</span><input type="datetime-local" aria-label="Fecha y hora de recogida" value={startAt} onChange={(event) => setStartAt(event.target.value)} /></label><label><span>Devolución</span><input type="datetime-local" aria-label="Fecha y hora de devolución" value={endAt} onChange={(event) => setEndAt(event.target.value)} /></label><label className="vehicle-search-input"><Search /><span>Buscar modelo</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Marca o modelo" /></label></div>
+    <div className="vehicle-results-layout"><aside className="desktop-filters"><Filters /></aside><section className="vehicle-results-list" aria-live="polite">{loading ? <div className="loading-screen"><div className="loader" /></div> : filtered.length ? <div className="vehicle-results-grid">{filtered.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} query={vehicleQuery} />)}</div> : <div className="vehicle-results-empty"><CarFront /><strong>No hay vehículos disponibles.</strong><button type="button" onClick={clearFilters}>Limpiar filtros</button></div>}</section></div>
     {filtersOpen && <div className="mobile-filter-overlay" role="dialog" aria-modal="true"><Filters /></div>}
   </div></main><Footer /></div>;
 }
