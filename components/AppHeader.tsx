@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CarFront, LogOut, Menu, ShieldCheck, UserRound, X } from "lucide-react";
+import { CalendarDays, CarFront, LogOut, Menu, ShieldCheck, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 
@@ -40,6 +40,7 @@ export default function AppHeader() {
         </div>
       </div>
       {open && user && <button className="mobile-logout" onClick={doLogout}><LogOut size={17} /> Cerrar sesión</button>}
+      {user && <nav className="client-bottom-nav" aria-label="Navegación principal"><Link href="/" className={pathname === "/" ? "active" : ""}><CarFront size={19} /><span>Inicio</span></Link><Link href="/vehiculos" className={pathname.startsWith("/vehiculos") ? "active" : ""}><CarFront size={19} /><span>Coches</span></Link><Link href="/mis-reservas" className={pathname.startsWith("/mis-reservas") || pathname.startsWith("/reserva/") ? "active" : ""}><CalendarDays size={19} /><span>Reservas</span></Link><Link href="/mi-cuenta" className={pathname.startsWith("/mi-cuenta") ? "active" : ""}><UserRound size={19} /><span>Cuenta</span></Link></nav>}
     </header>
   );
 }

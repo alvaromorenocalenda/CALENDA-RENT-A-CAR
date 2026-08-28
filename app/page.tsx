@@ -44,9 +44,9 @@ export default function HomePage() {
           <div className="container rental-hero-inner">
             <div className="rental-hero-copy">
               <p className="rental-kicker">CALENDA RENT A CAR</p>
-              <h1>Alquila tu coche de forma sencilla.</h1>
-              <p>Reserva online, recoge el vehículo y gestiona tu alquiler desde el móvil.</p>
-              <Link href="/vehiculos" className="rental-text-link">Ver nuestra flota <ArrowRight size={16} /></Link>
+              <h1>Tu coche cuando lo necesites</h1>
+              <p>Reserva desde el móvil, recoge el vehículo y gestiona todo tu alquiler online.</p>
+              <Link href="/vehiculos" className="btn btn-primary">Buscar coche</Link>
             </div>
             <div className="rental-search-box">
               <h2>Buscar vehículo</h2>
