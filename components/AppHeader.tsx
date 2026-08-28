@@ -6,10 +6,15 @@ import { CarFront, LogOut, Menu, ShieldCheck, UserRound, X } from "lucide-react"
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 
-const links = [
+const authenticatedLinks = [
   { href: "/vehiculos", label: "Vehículos" },
   { href: "/mis-reservas", label: "Mis reservas" },
   { href: "/mi-cuenta", label: "Mi cuenta" },
+];
+const publicLinks = [
+  { href: "/vehiculos", label: "Vehículos" },
+  { href: "/#como-funciona", label: "Cómo funciona" },
+  { href: "mailto:info@calenda.es", label: "Ayuda" },
 ];
 
 export default function AppHeader() {
@@ -17,55 +22,21 @@ export default function AppHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-
-  const doLogout = async () => {
-    await logout();
-    setOpen(false);
-    router.push("/");
-  };
+  const visibleLinks = user ? authenticatedLinks : publicLinks;
+  const doLogout = async () => { await logout(); setOpen(false); router.push("/"); };
 
   return (
     <header className="site-header rental-header">
       <div className="container header-inner">
-        <Link href="/" className="brand rental-brand" onClick={() => setOpen(false)}>
-          <span className="brand-mark"><CarFront size={20} /></span>
-          <span><strong>CALENDA</strong><small>RENT A CAR</small></span>
-        </Link>
-
+        <Link href="/" className="brand rental-brand" onClick={() => setOpen(false)}><span className="brand-mark"><CarFront size={20} /></span><span><strong>CALENDA</strong><small>RENT A CAR</small></span></Link>
         <nav className={`main-nav rental-nav ${open ? "is-open" : ""}`}>
-          {links.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={pathname === item.href || pathname.startsWith(item.href + "/") ? "active" : ""}
-              onClick={() => setOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          {profile?.role === "admin" && (
-            <Link href="/admin" className={pathname.startsWith("/admin") ? "active" : ""} onClick={() => setOpen(false)}>
-              <ShieldCheck size={15} /> Administración
-            </Link>
-          )}
+          {visibleLinks.map((item) => <Link key={item.href} href={item.href} className={item.href.startsWith("/#") ? "" : pathname === item.href || pathname.startsWith(item.href + "/") ? "active" : ""} onClick={() => setOpen(false)}>{item.label}</Link>)}
+          {user && profile?.role === "admin" && <Link href="/admin" className={pathname.startsWith("/admin") ? "active" : ""} onClick={() => setOpen(false)}><ShieldCheck size={15} /> Administración</Link>}
         </nav>
-
         <div className="header-actions">
-          {!loading && !user && (
-            <>
-              <Link href="/login" className="btn btn-ghost btn-small">Entrar</Link>
-              <Link href="/registro" className="btn btn-primary btn-small">Crear cuenta</Link>
-            </>
-          )}
-          {!loading && user && (
-            <>
-              <Link href="/mi-cuenta" className="user-chip"><UserRound size={16} /><span>{profile?.name?.split(" ")[0] || "Mi cuenta"}</span></Link>
-              <button className="icon-button desktop-only" onClick={doLogout} title="Cerrar sesión"><LogOut size={17} /></button>
-            </>
-          )}
-          <button className="menu-button" onClick={() => setOpen((v) => !v)} aria-label="Abrir menú">
-            {open ? <X size={23} /> : <Menu size={23} />}
-          </button>
+          {!loading && !user && <><Link href="/login" className="btn btn-ghost btn-small">Entrar</Link><Link href="/registro" className="btn btn-primary btn-small">Crear cuenta</Link></>}
+          {!loading && user && <><Link href="/mi-cuenta" className="user-chip"><UserRound size={16} /><span>{profile?.name?.split(" ")[0] || "Mi cuenta"}</span></Link><button className="icon-button desktop-only" onClick={doLogout} title="Cerrar sesión"><LogOut size={17} /></button></>}
+          <button className="menu-button" onClick={() => setOpen((value) => !value)} aria-label="Abrir menú">{open ? <X size={23} /> : <Menu size={23} />}</button>
         </div>
       </div>
       {open && user && <button className="mobile-logout" onClick={doLogout}><LogOut size={17} /> Cerrar sesión</button>}

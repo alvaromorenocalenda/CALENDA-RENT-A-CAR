@@ -36,7 +36,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           <div className="vehicle-location"><MapPin size={14} /> {vehicle.city}</div>
           <Link className="vehicle-arrow-link" href={`/vehiculos/${vehicle.id}`} aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}><ArrowUpRight size={18} /></Link>
         </div>
-        <Link className="btn btn-dark btn-block vehicle-main-action" href={`/vehiculos/${vehicle.id}`}>Ver disponibilidad</Link>
+        <Link className="btn btn-dark btn-block vehicle-main-action" href={`/vehiculos/${vehicle.id}`}>Ver vehículo</Link>
       </div>
     </article>
   );
