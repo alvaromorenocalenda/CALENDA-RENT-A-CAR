@@ -3,6 +3,7 @@ import "./globals.css";
 import "./business.css";
 import "./mobility.css";
 import { AuthProvider } from "@/components/AuthProvider";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
   title: {
@@ -23,7 +24,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" className="bg-white">
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ScrollReveal />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
