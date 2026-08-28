@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { Search } from "lucide-react";
+import { CarFront, Search, SlidersHorizontal } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
@@ -36,27 +36,45 @@ export default function VehiculosPage() {
   const cities = [...new Set(vehicles.map((v) => v.city).filter(Boolean))];
 
   return (
-    <div className="page">
+    <div className="page premium-page">
       <AppHeader />
-      <main className="page-main">
-        <div className="container">
-          <div className="page-heading">
-            <div><p className="eyebrow">Flota</p><h1>Vehículos disponibles</h1><p>Elige un coche y selecciona la franja exacta de tu reserva.</p></div>
-          </div>
-
-          <div className="panel" style={{ marginBottom: 22 }}>
-            <div className="panel-body form-grid">
-              <div className="field"><label>Buscar vehículo</label><div style={{ position: "relative" }}><Search size={17} style={{ position: "absolute", left: 13, top: 14, color: "#657287" }} /><input className="input" style={{ paddingLeft: 40 }} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Marca, modelo o matrícula" /></div></div>
-              <div className="field"><label>Zona</label><select className="select" value={city} onChange={(e) => setCity(e.target.value)}><option value="">Todas las zonas</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+      <main>
+        <section className="fleet-hero">
+          <div className="container fleet-hero-inner">
+            <div>
+              <p className="eyebrow eyebrow-light">Flota Calenda</p>
+              <h1>Encuentra el coche que encaja contigo.</h1>
+              <p>Consulta disponibilidad, precio y características antes de reservar. Todo el proceso se gestiona desde tu cuenta.</p>
             </div>
+            <div className="fleet-hero-mark"><CarFront size={76} strokeWidth={1.25} /></div>
           </div>
+        </section>
 
-          {loading ? <div className="loading-screen"><div className="loader" /></div> : filtered.length ? (
-            <div className="vehicle-grid">{filtered.map((v) => <VehicleCard key={v.id} vehicle={v} />)}</div>
-          ) : (
-            <div className="panel"><div className="empty-state"><strong>No hay vehículos publicados</strong><span>En cuanto el administrador añada el primer coche aparecerá aquí.</span></div></div>
-          )}
-        </div>
+        <section className="page-main premium-fleet-main">
+          <div className="container">
+            <div className="fleet-toolbar">
+              <div className="fleet-toolbar-title"><SlidersHorizontal size={18} /><span>Filtrar vehículos</span></div>
+              <div className="fleet-result-count">{loading ? "Cargando flota…" : `${filtered.length} vehículo${filtered.length === 1 ? "" : "s"}`}</div>
+            </div>
+
+            <div className="filter-surface">
+              <div className="field">
+                <label>Buscar</label>
+                <div className="input-with-icon"><Search size={17} /><input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Marca, modelo o matrícula" /></div>
+              </div>
+              <div className="field">
+                <label>Zona de recogida</label>
+                <select className="select" value={city} onChange={(e) => setCity(e.target.value)}><option value="">Todas las zonas</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+              </div>
+            </div>
+
+            {loading ? <div className="loading-screen"><div className="loader" /></div> : filtered.length ? (
+              <div className="vehicle-grid premium-vehicle-grid">{filtered.map((v) => <VehicleCard key={v.id} vehicle={v} />)}</div>
+            ) : (
+              <div className="panel premium-empty-panel"><div className="empty-state"><CarFront size={34} /><strong>No hay vehículos disponibles con estos filtros</strong><span>Prueba otra zona o elimina el texto de búsqueda.</span></div></div>
+            )}
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
