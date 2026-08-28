@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { collection, doc, getDoc, getDocs, query, where, writeBatch } from "firebase/firestore";
-import { Fuel, Gauge, MapPin, ShieldCheck, Users } from "lucide-react";
+import { Fuel, Gauge, MapPin, Users } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/components/AuthProvider";
@@ -121,36 +121,41 @@ export default function VehicleDetailPage() {
         <div className="container detail-grid">
           <section className="detail-card">
             <div className="detail-image">
-              {vehicle.imageUrl ? <img src={vehicle.imageUrl} alt={`${vehicle.brand} ${vehicle.model}`} /> : <div className="vehicle-placeholder"><span>{vehicle.brand}</span><strong>{vehicle.model}</strong></div>}
+              {vehicle.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={vehicle.imageUrl} alt={`${vehicle.brand} ${vehicle.model}`} />
+              ) : (
+                <div className="vehicle-placeholder"><span>{vehicle.brand}</span><strong>{vehicle.model}</strong></div>
+              )}
             </div>
             <div className="detail-body">
-              <p className="eyebrow">{vehicle.year} · {vehicle.plate}</p>
+              <p className="eyebrow">{vehicle.year}</p>
               <h1>{vehicle.brand} {vehicle.model}</h1>
-              <p className="muted">{vehicle.description || "Vehículo preparado para alquiler autónomo desde la plataforma Calenda Rent a Car."}</p>
+              <p className="muted">{vehicle.description || "Reserva este vehículo online y gestiona el alquiler desde tu cuenta."}</p>
               <div className="spec-grid">
-                <div className="spec-box"><span>Combustible</span><strong><Fuel size={14} /> {vehicle.fuel}</strong></div>
-                <div className="spec-box"><span>Cambio</span><strong><Gauge size={14} /> {vehicle.transmission}</strong></div>
-                <div className="spec-box"><span>Plazas</span><strong><Users size={14} /> {vehicle.seats}</strong></div>
-                <div className="spec-box"><span>Recogida</span><strong><MapPin size={14} /> {vehicle.city}</strong></div>
-                <div className="spec-box"><span>Apertura móvil</span><strong>{vehicle.telematicsEnabled ? "Preparada" : "Pendiente"}</strong></div>
-                <div className="spec-box"><span>Inmovilizador</span><strong>{vehicle.immobilizerEnabled ? "Preparado" : "Pendiente"}</strong></div>
+                <div className="spec-box"><span>Combustible</span><strong><Fuel size={15} /> {vehicle.fuel}</strong></div>
+                <div className="spec-box"><span>Transmisión</span><strong><Gauge size={15} /> {vehicle.transmission}</strong></div>
+                <div className="spec-box"><span>Plazas</span><strong><Users size={15} /> {vehicle.seats}</strong></div>
+                <div className="spec-box"><span>Recogida</span><strong><MapPin size={15} /> {vehicle.city}</strong></div>
+                <div className="spec-box"><span>Precio</span><strong>{money(vehicle.priceDay)} / día</strong></div>
+                <div className="spec-box"><span>Fianza</span><strong>{money(vehicle.deposit || 0)}</strong></div>
               </div>
             </div>
           </section>
 
           <form className="booking-box" onSubmit={reserve}>
-            <p className="eyebrow">Crear reserva</p>
-            <h2>{money(vehicle.priceDay)} / día</h2>
-            <div className="field" style={{ marginTop: 18 }}><label>Inicio</label><input className="input" type="datetime-local" required value={startAt} onChange={(e) => setStartAt(e.target.value)} /></div>
+            <p className="eyebrow">Tu reserva</p>
+            <h2>{money(vehicle.priceDay)} <small>/ día</small></h2>
+            <div className="field" style={{ marginTop: 18 }}><label>Recogida</label><input className="input" type="datetime-local" required value={startAt} onChange={(e) => setStartAt(e.target.value)} /></div>
             <div className="field" style={{ marginTop: 12 }}><label>Devolución</label><input className="input" type="datetime-local" required value={endAt} onChange={(e) => setEndAt(e.target.value)} /></div>
             <div className="price-summary">
               <div className="price-line"><span>{days || 0} día(s) × {money(vehicle.priceDay)}</span><strong>{money(amount)}</strong></div>
-              <div className="price-line"><span>Fianza prevista</span><strong>{money(vehicle.deposit || 0)}</strong></div>
+              <div className="price-line"><span>Fianza</span><strong>{money(vehicle.deposit || 0)}</strong></div>
               <div className="price-line total"><span>Total alquiler</span><strong>{money(amount)}</strong></div>
             </div>
-            <div className="notice notice-info" style={{ marginBottom: 13 }}><ShieldCheck size={15} style={{ verticalAlign: "middle", marginRight: 6 }} />La reserva se crea como pendiente. Pago, verificación automática y telemática se conectarán después sin rehacer este flujo.</div>
             {error && <div className="form-error">{error}</div>}
-            <button className="btn btn-primary btn-block" disabled={busy || !days}>{busy ? "Creando reserva..." : user ? "Solicitar reserva" : "Entrar para reservar"}</button>
+            <button className="btn btn-primary btn-block" disabled={busy || !days}>{busy ? "Creando reserva..." : user ? "Reservar" : "Entrar para reservar"}</button>
+            <p className="muted small" style={{ margin: "14px 0 0" }}>La disponibilidad se confirma al enviar la reserva.</p>
           </form>
         </div>
       </main>
