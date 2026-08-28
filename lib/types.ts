@@ -31,6 +31,7 @@ export interface Vehicle {
   pickupAddress: string;
   description?: string;
   imageUrl?: string;
+  galleryImages?: string[];
   features?: string[];
   active: boolean;
   trackerId?: string;
