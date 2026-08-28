@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
-import { ArrowRight, CarFront } from "lucide-react";
+import { ArrowRight, Camera, CarFront, KeyRound, MapPin, Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
@@ -22,9 +22,14 @@ export default function HomePage() {
     let mounted = true;
     getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc"), limit(3)))
       .then((snap) => {
-        if (mounted) setVehicles(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) })).filter((vehicle) => vehicle.active !== false));
+        if (!mounted) return;
+        setVehicles(
+          snap.docs
+            .map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) }))
+            .filter((vehicle) => vehicle.active !== false)
+        );
       })
-      .catch((error) => console.error("[v0] No se pudo cargar la flota destacada:", error));
+      .catch((error) => console.error("No se pudo cargar la flota destacada:", error));
     return () => { mounted = false; };
   }, []);
 
@@ -36,46 +41,113 @@ export default function HomePage() {
     router.push(`/vehiculos?${params.toString()}`);
   };
 
+  const heroVehicle = vehicles.find((vehicle) => vehicle.imageUrl) || vehicles[0];
+
   return (
-    <div className="page rental-page">
+    <div className="page mobility-home">
       <AppHeader />
       <main>
-        <section className="rental-hero">
-          <div className="container rental-hero-inner">
-            <div className="rental-hero-copy">
-              <p className="rental-kicker">CALENDA RENT A CAR</p>
-              <h1>Tu coche cuando lo necesites</h1>
+        <section className="mobility-hero">
+          <div className="container mobility-hero-grid">
+            <div className="mobility-hero-copy">
+              <p className="mobility-kicker">Calenda Rent a Car</p>
+              <h1>Tu coche <span>cuando lo necesites.</span></h1>
               <p>Reserva desde el móvil, recoge el vehículo y gestiona todo tu alquiler online.</p>
-              <Link href="/vehiculos" className="btn btn-primary">Buscar coche</Link>
-            </div>
-            <div className="rental-search-box">
-              <h2>Buscar vehículo</h2>
-              <div className="rental-search-grid">
-                <div className="field full"><label>Recogida</label><input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Localidad" /></div>
-                <div className="field"><label>Fecha y hora de inicio</label><input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} /></div>
-                <div className="field"><label>Fecha y hora de devolución</label><input className="input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} /></div>
-                <button className="btn btn-primary full" onClick={search}>Buscar coches</button>
+              <div className="mobility-hero-actions">
+                <Link href="/vehiculos" className="btn btn-primary">Buscar coche <ArrowRight size={18} /></Link>
+                <a href="#como-funciona" className="mobility-link">Cómo funciona</a>
               </div>
             </div>
-          </div>
-        </section>
 
-        <section id="como-funciona" className="rental-section how-section">
-          <div className="container">
-            <div className="rental-section-heading"><p>Cómo funciona</p></div>
-            <div className="rental-steps">
-              <div className="rental-step"><span>01</span><div><h3>Reserva</h3><p>Selecciona el vehículo y las fechas.</p></div></div>
-              <div className="rental-step"><span>02</span><div><h3>Revisa el coche</h3><p>Realiza las fotografías al llegar.</p></div></div>
-              <div className="rental-step"><span>03</span><div><h3>Recoge y conduce</h3><p>Abre el vehículo cuando la reserva esté autorizada.</p></div></div>
-              <div className="rental-step"><span>04</span><div><h3>Devuelve</h3><p>Realiza la inspección final y termina el alquiler.</p></div></div>
+            <div className="mobility-visual" aria-label="Vehículo Calenda Rent a Car">
+              {heroVehicle?.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={heroVehicle.imageUrl} alt={`${heroVehicle.brand} ${heroVehicle.model}`} />
+              ) : (
+                <div className="mobility-visual-placeholder"><strong>Tu próximo coche, listo para reservar.</strong></div>
+              )}
+              {heroVehicle && <span className="mobility-visual-label">{heroVehicle.brand} {heroVehicle.model}</span>}
             </div>
           </div>
         </section>
 
-        <section className="rental-fleet-preview">
+        <div className="mobility-search-wrap">
           <div className="container">
-            <div className="rental-section-heading fleet-preview-heading"><div><p>La flota</p><h2>Vehículos disponibles</h2></div><Link href="/vehiculos" className="rental-text-link">Ver todos <ArrowRight size={16} /></Link></div>
-            {vehicles.length ? <div className="vehicle-grid premium-vehicle-grid">{vehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div> : <div className="fleet-empty"><CarFront size={22} /><span>No hay vehículos disponibles en este momento.</span></div>}
+            <div className="mobility-search">
+              <div className="field">
+                <label>Recogida</label>
+                <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Localidad" />
+              </div>
+              <div className="field">
+                <label>Fecha y hora de inicio</label>
+                <input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
+              </div>
+              <div className="field">
+                <label>Fecha y hora de devolución</label>
+                <input className="input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
+              </div>
+              <button className="btn btn-primary" onClick={search}>Buscar coches</button>
+            </div>
+          </div>
+        </div>
+
+        <section id="como-funciona" className="mobility-section">
+          <div className="container">
+            <div className="mobility-section-head">
+              <div>
+                <p className="label">Cómo funciona</p>
+                <h2>Reserva y conduce.</h2>
+              </div>
+              <p>Todo el proceso está pensado para hacerlo desde el teléfono, sin pasar por un mostrador.</p>
+            </div>
+
+            <div className="mobility-steps">
+              <article className="mobility-step"><span className="mobility-step-number">01</span><h3>Regístrate</h3><p>Crea tu cuenta y completa tus datos de conductor.</p></article>
+              <article className="mobility-step"><span className="mobility-step-number">02</span><h3>Reserva</h3><p>Elige el coche y selecciona la fecha y hora que necesitas.</p></article>
+              <article className="mobility-step"><span className="mobility-step-number">03</span><h3>Haz las fotos y abre</h3><p>Revisa el vehículo desde el móvil antes de comenzar.</p></article>
+              <article className="mobility-step"><span className="mobility-step-number">04</span><h3>Conduce y devuelve</h3><p>Al terminar, realiza la revisión final y cierra el alquiler.</p></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="mobility-fleet">
+          <div className="container">
+            <div className="mobility-section-head">
+              <div>
+                <p className="label">Nuestra flota</p>
+                <h2>Elige tu coche.</h2>
+              </div>
+              <Link href="/vehiculos" className="mobility-link">Ver todos <ArrowRight size={16} /></Link>
+            </div>
+            {vehicles.length ? (
+              <div className="vehicle-grid">
+                {vehicles.map((vehicle) => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}
+              </div>
+            ) : (
+              <div className="fleet-empty"><CarFront size={22} /><span>No hay vehículos disponibles en este momento.</span></div>
+            )}
+          </div>
+        </section>
+
+        <section className="mobility-access">
+          <div className="container mobility-access-grid">
+            <div className="mobility-access-copy">
+              <p className="label">Todo desde el móvil</p>
+              <h2>Tu alquiler, en una sola app.</h2>
+              <p>Reserva, revisa el estado del coche y gestiona las acciones del alquiler desde tu cuenta.</p>
+            </div>
+            <div className="mobility-access-list">
+              <article className="mobility-access-item"><span><Smartphone size={20} /></span><div><h3>Reserva online</h3><p>Consulta la flota y selecciona tu franja de alquiler.</p></div></article>
+              <article className="mobility-access-item"><span><Camera size={20} /></span><div><h3>Inspección fotográfica</h3><p>Haz las fotografías obligatorias antes y después del alquiler.</p></div></article>
+              <article className="mobility-access-item"><span><KeyRound size={20} /></span><div><h3>Acceso al vehículo</h3><p>La plataforma queda preparada para apertura remota cuando conectemos la telemática.</p></div></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="mobility-location">
+          <div className="container mobility-location-card">
+            <div><h2>Recogida en Higuera la Real.</h2><p>Consulta la ubicación exacta de cada vehículo antes de reservar.</p></div>
+            <div className="mobility-location-pin"><MapPin size={28} /></div>
           </div>
         </section>
       </main>
