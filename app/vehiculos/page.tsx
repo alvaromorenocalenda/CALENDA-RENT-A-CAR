@@ -7,6 +7,7 @@ import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 import VehicleCard from "@/components/VehicleCard";
 import { db } from "@/lib/firebase";
+import { firstCalendaVehicle } from "@/lib/fallbackVehicle";
 import type { Vehicle } from "@/lib/types";
 
 const optionValues = (vehicles: Vehicle[], key: keyof Vehicle) => [...new Set(vehicles.map((vehicle) => String(vehicle[key] ?? "")).filter(Boolean))];
@@ -33,9 +34,11 @@ export default function VehiculosPage() {
     (async () => {
       try {
         const snap = await getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc")));
-        setVehicles(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) })).filter((v) => v.active !== false));
+        const loadedVehicles = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) })).filter((v) => v.active !== false);
+        setVehicles(loadedVehicles.length ? loadedVehicles : [firstCalendaVehicle]);
       } catch (error) {
         console.error("[v0] No se pudo cargar la flota:", error);
+        setVehicles([firstCalendaVehicle]);
       } finally {
         setLoading(false);
       }
