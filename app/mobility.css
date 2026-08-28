@@ -40,8 +40,9 @@
 .mobility-visual{position:relative;min-height:610px;background:#dfe2e2;overflow:hidden}
 .mobility-visual img{width:100%;height:100%;object-fit:cover;display:block}
 .mobility-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(245,244,239,.1),transparent 24%);pointer-events:none}
-.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;align-items:flex-end;justify-content:flex-start;padding:48px;background:linear-gradient(145deg,#e7e8e5,#cfd2d1);color:var(--calenda-ink)}
-.mobility-visual-placeholder strong{font-size:clamp(30px,4vw,52px);line-height:1;letter-spacing:-.04em;max-width:420px}
+.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 48px 112px;background:#dfe2e2;color:var(--calenda-ink);overflow:hidden}
+.mobility-visual-placeholder span{font-size:clamp(58px,7vw,112px);line-height:.82;letter-spacing:-.075em;font-weight:950;opacity:.12;white-space:nowrap;transform:translateX(-1.5%)}
+.mobility-visual-placeholder small{margin-top:22px;font-size:12px;letter-spacing:.42em;font-weight:900;opacity:.38}
 .mobility-visual-label{position:absolute;left:28px;bottom:28px;background:#fff;padding:12px 16px;border-radius:999px;font-size:13px;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,.08)}
 
 .mobility-search-wrap{position:relative;z-index:5;margin-top:-72px;padding-bottom:20px}
@@ -50,6 +51,23 @@
 .mobility-search .field label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#777d82}
 .mobility-search .input{border:0!important;padding:0!important;min-height:30px!important;background:transparent!important;box-shadow:none!important;font-weight:700;color:var(--calenda-ink)}
 .mobility-search .btn{margin:12px;min-width:170px;border-radius:12px!important;min-height:58px!important}
+
+/* Motion: restrained, useful and disabled when the visitor requests it. */
+main{animation:calenda-page-in .55s cubic-bezier(.22,1,.36,1) both}
+.mobility-hero-copy>*{animation:calenda-hero-up .7s cubic-bezier(.22,1,.36,1) both}
+.mobility-hero-copy>*:nth-child(2){animation-delay:.06s}.mobility-hero-copy>*:nth-child(3){animation-delay:.12s}.mobility-hero-copy>*:nth-child(4){animation-delay:.18s}
+.mobility-visual{animation:calenda-hero-image .9s cubic-bezier(.22,1,.36,1) .08s both}
+[data-reveal]{opacity:0;transform:translateY(30px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+[data-reveal].is-visible{opacity:1;transform:none}
+.btn,.mobility-link,.main-nav a,.client-bottom-nav a{transition:transform .22s cubic-bezier(.22,1,.36,1),background-color .22s,color .22s,border-color .22s,box-shadow .22s}
+.btn:not(:disabled):active{transform:translateY(1px) scale(.985)}
+.vehicle-image-wrap:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);transform:translateX(-130%);transition:transform .75s ease;pointer-events:none}
+.results-vehicle-card:hover .vehicle-image-wrap:after{transform:translateX(130%)}
+.mobility-step{transition:background-color .25s,transform .3s cubic-bezier(.22,1,.36,1)}
+.mobility-step:hover{background:#fafafa;transform:translateY(-4px)}
+@keyframes calenda-page-in{from{opacity:0}to{opacity:1}}
+@keyframes calenda-hero-up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes calenda-hero-image{from{opacity:0;transform:scale(1.025)}to{opacity:1;transform:none}}
 
 .mobility-section{padding:92px 0}
 .mobility-section-head{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:42px}
@@ -235,4 +253,10 @@
   .results-vehicle-card .vehicle-image-wrap{height:225px!important}
   .spec-grid{grid-template-columns:1fr!important}
   .spec-box,.spec-box:nth-child(3n){border-right:0!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  [data-reveal]{opacity:1;transform:none}
 }
