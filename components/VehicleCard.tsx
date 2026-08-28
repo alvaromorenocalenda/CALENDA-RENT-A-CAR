@@ -22,7 +22,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
       <div className="vehicle-card-body">
         <div className="vehicle-title-row">
           <div>
-            <p className="vehicle-kicker">{vehicle.year} · {vehicle.plate}</p>
+            <p className="vehicle-kicker">{vehicle.year}</p>
             <h3>{vehicle.brand} {vehicle.model}</h3>
           </div>
           <div className="price"><strong>{money(vehicle.priceDay)}</strong><small>por día</small></div>
