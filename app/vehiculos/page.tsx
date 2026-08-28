@@ -35,7 +35,11 @@ export default function VehiculosPage() {
       try {
         const snap = await getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc")));
         const loadedVehicles = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) })).filter((v) => v.active !== false);
-        setVehicles(loadedVehicles.length ? loadedVehicles : [firstCalendaVehicle]);
+        const hasC4Cactus = loadedVehicles.some((vehicle) =>
+          vehicle.id === firstCalendaVehicle.id ||
+          `${vehicle.brand} ${vehicle.model}`.toLowerCase().includes("c4 cactus")
+        );
+        setVehicles(hasC4Cactus ? loadedVehicles : [firstCalendaVehicle, ...loadedVehicles]);
       } catch (error) {
         console.error("[v0] No se pudo cargar la flota:", error);
         setVehicles([firstCalendaVehicle]);
