@@ -3,18 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  ArrowRight,
-  Camera,
-  CarFront,
-  CheckCircle2,
-  Clock3,
-  KeyRound,
-  MapPin,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 
@@ -33,121 +22,81 @@ export default function HomePage() {
   };
 
   return (
-    <div className="page premium-page">
+    <div className="page rental-page">
       <AppHeader />
       <main>
-        <section className="hero premium-hero">
-          <div className="hero-orb hero-orb-one" />
-          <div className="hero-orb hero-orb-two" />
-          <div className="container premium-hero-grid">
-            <div className="hero-copy premium-hero-copy">
-              <div className="premium-badge"><Sparkles size={15} /> Movilidad simple, digital y sin esperas</div>
-              <h1>Tu coche, listo <span>cuando tú lo estés.</span></h1>
-              <p className="hero-lead">Reserva, accede y devuelve el vehículo desde el móvil. Sin mostrador, sin colas y con todo el proceso dentro de una sola aplicación.</p>
-              <div className="hero-actions-row">
-                <Link href="/vehiculos" className="btn btn-primary btn-large">Ver vehículos <ArrowRight size={18} /></Link>
-                <a href="#como-funciona" className="btn btn-hero-secondary btn-large">Cómo funciona</a>
-              </div>
-              <div className="hero-proof-row">
-                <span><CheckCircle2 size={16} /> Reserva online</span>
-                <span><CheckCircle2 size={16} /> Acceso desde el móvil</span>
-                <span><CheckCircle2 size={16} /> Inspección fotográfica</span>
-              </div>
+        <section className="rental-hero">
+          <div className="container rental-hero-inner">
+            <div className="rental-hero-copy">
+              <p className="rental-kicker">CALENDA RENT A CAR</p>
+              <h1>Alquila tu coche de forma sencilla.</h1>
+              <p>Reserva online, recoge el vehículo y gestiona tu alquiler desde el móvil.</p>
+              <Link href="/vehiculos" className="rental-text-link">Ver nuestra flota <ArrowRight size={16} /></Link>
             </div>
 
-            <div className="hero-experience">
-              <div className="hero-car-stage">
-                <div className="hero-stage-top">
-                  <span>CALENDA SMART ACCESS</span>
-                  <span className="live-dot"><i /> Preparado</span>
+            <div className="rental-search-box">
+              <h2>Buscar vehículo</h2>
+              <div className="rental-search-grid">
+                <div className="field full">
+                  <label>Recogida</label>
+                  <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Localidad" />
                 </div>
-                <div className="hero-car-icon"><CarFront size={148} strokeWidth={1.25} /></div>
-                <div className="hero-stage-copy">
-                  <span>Tu alquiler, en tu bolsillo</span>
-                  <strong>Reserva · Abre · Conduce</strong>
+                <div className="field">
+                  <label>Fecha y hora de inicio</label>
+                  <input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
                 </div>
-                <div className="hero-mini-cards">
-                  <div><Smartphone size={18} /><span>Acceso digital</span></div>
-                  <div><ShieldCheck size={18} /><span>Proceso seguro</span></div>
-                  <div><Clock3 size={18} /><span>Disponibilidad 24/7</span></div>
+                <div className="field">
+                  <label>Fecha y hora de devolución</label>
+                  <input className="input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
                 </div>
-              </div>
-
-              <div className="hero-card premium-search-card">
-                <div className="search-card-heading">
-                  <div><p className="eyebrow">Reserva</p><h2>Encuentra tu coche</h2></div>
-                  <span className="search-card-icon"><MapPin size={19} /></span>
-                </div>
-                <div className="search-grid">
-                  <div className="field full">
-                    <label>Zona de recogida</label>
-                    <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Higuera la Real" />
-                  </div>
-                  <div className="field">
-                    <label>Inicio</label>
-                    <input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
-                  </div>
-                  <div className="field">
-                    <label>Devolución</label>
-                    <input className="input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
-                  </div>
-                  <button className="btn btn-primary full" onClick={search}>Buscar disponibilidad <ArrowRight size={17} /></button>
-                </div>
+                <button className="btn btn-primary full" onClick={search}>Buscar coches</button>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="premium-trustbar">
-          <div className="container premium-trustbar-inner">
-            <div><strong>100%</strong><span>gestión digital</span></div>
-            <div><strong>24/7</strong><span>acceso al vehículo</span></div>
-            <div><strong>8 fotos</strong><span>por inspección</span></div>
-            <div><strong>1 app</strong><span>para todo el alquiler</span></div>
+        <section className="rental-benefits">
+          <div className="container rental-benefits-grid">
+            <div><strong>Reserva online</strong><span>Elige vehículo, fecha y hora desde la web.</span></div>
+            <div><strong>Sin entrega en mostrador</strong><span>El proceso de recogida se gestiona desde tu cuenta.</span></div>
+            <div><strong>Control del alquiler</strong><span>Consulta reservas, inspecciones y estado del vehículo.</span></div>
           </div>
         </section>
 
-        <section className="section premium-section" id="como-funciona">
+        <section className="rental-section">
           <div className="container">
-            <div className="section-heading-row">
-              <div className="section-title">
-                <p className="eyebrow">Una experiencia mejor</p>
-                <h2>Alquilar un coche debería ser así de fácil.</h2>
-              </div>
-              <p className="section-side-copy">Hemos diseñado el proceso para eliminar esperas y trámites innecesarios. Tú eliges cuándo empiezas y cuándo terminas.</p>
+            <div className="rental-section-heading">
+              <p>Cómo funciona</p>
+              <h2>Cuatro pasos y listo.</h2>
             </div>
-
-            <div className="process-grid premium-process-grid">
-              <article className="process-card premium-process-card"><div className="process-number">01</div><div className="process-icon"><Clock3 /></div><h3>Reserva</h3><p>Selecciona vehículo, fecha y hora. La plataforma comprueba disponibilidad y prepara tu alquiler.</p></article>
-              <article className="process-card premium-process-card"><div className="process-number">02</div><div className="process-icon"><Camera /></div><h3>Inspecciona</h3><p>Al llegar, haces las fotografías obligatorias para dejar registrado el estado del vehículo.</p></article>
-              <article className="process-card premium-process-card"><div className="process-number">03</div><div className="process-icon"><KeyRound /></div><h3>Abre y conduce</h3><p>Con la reserva autorizada, abres desde el móvil y recoges la llave física que queda en el interior.</p></article>
-              <article className="process-card premium-process-card"><div className="process-number">04</div><div className="process-icon"><CheckCircle2 /></div><h3>Devuelve</h3><p>Aparca, completa la inspección final, guarda la llave y cierra el coche desde la aplicación.</p></article>
+            <div className="rental-steps">
+              <div className="rental-step"><span>1</span><div><h3>Reserva</h3><p>Selecciona el coche y las fechas que necesitas.</p></div></div>
+              <div className="rental-step"><span>2</span><div><h3>Revisa el coche</h3><p>Al llegar, haces las fotografías indicadas desde el móvil.</p></div></div>
+              <div className="rental-step"><span>3</span><div><h3>Recoge y conduce</h3><p>Cuando la reserva esté autorizada podrás acceder al vehículo.</p></div></div>
+              <div className="rental-step"><span>4</span><div><h3>Devuelve</h3><p>Haz la revisión final, deja la llave y termina el alquiler.</p></div></div>
             </div>
           </div>
         </section>
 
-        <section className="section premium-dark-section">
-          <div className="container premium-tech-grid">
-            <div className="premium-tech-copy">
-              <p className="eyebrow eyebrow-light">Tecnología útil</p>
-              <h2>Todo lo importante, sin complicarte la vida.</h2>
-              <p>La plataforma está preparada para conectar reservas, identidad, fotografías, localización y acceso remoto al vehículo en un único flujo.</p>
-              <Link href="/vehiculos" className="text-link-light">Explorar la flota <ArrowRight size={17} /></Link>
+        <section className="rental-info-section">
+          <div className="container rental-info-grid">
+            <div>
+              <p className="rental-kicker dark">ALQUILER DIGITAL</p>
+              <h2>Todo lo necesario en una sola cuenta.</h2>
             </div>
-            <div className="premium-feature-stack">
-              <article className="premium-feature"><span><Smartphone /></span><div><h3>Acceso desde el móvil</h3><p>La aplicación valida usuario, reserva y horario antes de permitir el acceso.</p></div></article>
-              <article className="premium-feature"><span><ShieldCheck /></span><div><h3>Control y trazabilidad</h3><p>Cada reserva, inspección y cambio de estado queda asociado al usuario y al vehículo.</p></div></article>
-              <article className="premium-feature"><span><MapPin /></span><div><h3>Vehículo conectado</h3><p>Preparado para GPS, telemática, apertura remota y control seguro de la franja de alquiler.</p></div></article>
+            <div className="rental-info-list">
+              <p><strong>Reservas.</strong> Consulta próximas reservas y alquileres anteriores.</p>
+              <p><strong>Inspecciones.</strong> Las fotografías iniciales y finales quedan vinculadas a cada alquiler.</p>
+              <p><strong>Vehículos.</strong> Consulta características, ubicación y precio antes de reservar.</p>
+              <p><strong>Acceso remoto.</strong> Se activará en los vehículos equipados con el sistema telemático.</p>
             </div>
           </div>
         </section>
 
-        <section className="section premium-cta-section">
-          <div className="container">
-            <div className="premium-cta-card">
-              <div><p className="eyebrow">Tu próximo viaje empieza aquí</p><h2>Elige coche. El resto lo hacemos fácil.</h2><p>Consulta la flota, selecciona tus fechas y gestiona todo desde tu cuenta.</p></div>
-              <Link href="/vehiculos" className="btn btn-primary btn-large">Ver vehículos <ArrowRight size={18} /></Link>
-            </div>
+        <section className="rental-cta">
+          <div className="container rental-cta-inner">
+            <div><h2>¿Necesitas un coche?</h2><p>Consulta los vehículos disponibles y elige tus fechas.</p></div>
+            <Link href="/vehiculos" className="btn btn-dark">Ver vehículos</Link>
           </div>
         </section>
       </main>
