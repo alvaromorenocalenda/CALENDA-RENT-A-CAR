@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, CarFront, LogOut, Menu, ShieldCheck, UserRound, X } from "lucide-react";
 import { useState } from "react";
@@ -29,7 +30,9 @@ export default function AppHeader() {
   return (
     <header className="site-header rental-header">
       <div className="container header-inner">
-        <Link href="/" className="brand rental-brand" onClick={() => setOpen(false)}><span className="brand-mark"><CarFront size={20} /></span><span><strong>CALENDA</strong><small>RENT A CAR</small></span></Link>
+        <Link href="/" className="brand rental-brand official-brand" onClick={() => setOpen(false)} aria-label="Calenda Rent a Car">
+          <Image src="/brand/calenda-rent-a-car-logo.webp" alt="Calenda Rent a Car" width={145} height={109} priority />
+        </Link>
         <nav className={`main-nav rental-nav ${open ? "is-open" : ""}`}>
           {visibleLinks.map((item) => <Link key={item.href} href={item.href} className={item.href.startsWith("/#") ? "" : pathname === item.href || pathname.startsWith(item.href + "/") ? "active" : ""} onClick={() => setOpen(false)}>{item.label}</Link>)}
           {user && profile?.role === "admin" && <Link href="/admin" className={pathname.startsWith("/admin") ? "active" : ""} onClick={() => setOpen(false)}><ShieldCheck size={15} /> Administración</Link>}
