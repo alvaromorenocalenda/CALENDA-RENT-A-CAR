@@ -3,10 +3,11 @@ import { Fuel, Gauge, MapPin, Users } from "lucide-react";
 import type { Vehicle } from "@/lib/types";
 import { money } from "@/lib/utils";
 
-export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+export default function VehicleCard({ vehicle, query = "" }: { vehicle: Vehicle; query?: string }) {
+  const href = `/vehiculos/${vehicle.id}${query ? `?${query}` : ""}`;
   return (
     <article className="vehicle-card results-vehicle-card">
-      <Link href={`/vehiculos/${vehicle.id}`} className="vehicle-image-wrap" aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}>
+      <Link href={href} className="vehicle-image-wrap" aria-label={`Ver ${vehicle.brand} ${vehicle.model}`}>
         {vehicle.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={vehicle.imageUrl} alt={`${vehicle.brand} ${vehicle.model}`} className="vehicle-image" />
@@ -25,7 +26,7 @@ export default function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
           <span><Users />{vehicle.seats} plazas</span>
         </div>
         <div className="vehicle-location"><MapPin />{vehicle.city}</div>
-        <Link className="btn btn-primary vehicle-main-action" href={`/vehiculos/${vehicle.id}`}>Ver vehículo</Link>
+        <Link className="btn btn-primary vehicle-main-action" href={href}>Ver coche</Link>
       </div>
     </article>
   );
