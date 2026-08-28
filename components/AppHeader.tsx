@@ -25,11 +25,11 @@ export default function AppHeader() {
   };
 
   return (
-    <header className="site-header">
+    <header className="site-header premium-header">
       <div className="container header-inner">
-        <Link href="/" className="brand" onClick={() => setOpen(false)}>
-          <span className="brand-mark"><CarFront size={22} /></span>
-          <span><strong>CALENDA</strong><small>RENT A CAR</small></span>
+        <Link href="/" className="brand premium-brand" onClick={() => setOpen(false)}>
+          <span className="brand-mark"><CarFront size={21} strokeWidth={1.9} /></span>
+          <span className="brand-copy"><strong>CALENDA</strong><small>RENT A CAR</small></span>
         </Link>
 
         <nav className={`main-nav ${open ? "is-open" : ""}`}>
@@ -45,7 +45,7 @@ export default function AppHeader() {
           ))}
           {profile?.role === "admin" && (
             <Link href="/admin" className={pathname.startsWith("/admin") ? "active" : ""} onClick={() => setOpen(false)}>
-              <ShieldCheck size={16} /> Admin
+              <ShieldCheck size={15} /> Administración
             </Link>
           )}
         </nav>
@@ -54,16 +54,16 @@ export default function AppHeader() {
           {!loading && !user && (
             <>
               <Link href="/login" className="btn btn-ghost btn-small">Entrar</Link>
-              <Link href="/registro" className="btn btn-primary btn-small">Crear cuenta</Link>
+              <Link href="/registro" className="btn btn-dark btn-small header-cta">Crear cuenta</Link>
             </>
           )}
           {!loading && user && (
             <>
               <Link href="/mi-cuenta" className="user-chip">
-                <UserRound size={17} />
+                <span className="user-avatar"><UserRound size={15} /></span>
                 <span>{profile?.name?.split(" ")[0] || "Mi cuenta"}</span>
               </Link>
-              <button className="icon-button desktop-only" onClick={doLogout} title="Cerrar sesión"><LogOut size={18} /></button>
+              <button className="icon-button desktop-only" onClick={doLogout} title="Cerrar sesión"><LogOut size={17} /></button>
             </>
           )}
           <button className="menu-button" onClick={() => setOpen((v) => !v)} aria-label="Abrir menú">
