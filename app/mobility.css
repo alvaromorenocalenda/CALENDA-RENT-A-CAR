@@ -40,9 +40,14 @@
 .mobility-visual{position:relative;min-height:610px;background:#dfe2e2;overflow:hidden}
 .mobility-visual img{width:100%;height:100%;object-fit:cover;display:block}
 .mobility-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(245,244,239,.1),transparent 24%);pointer-events:none}
-.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 48px 112px;background:#dfe2e2;color:var(--calenda-ink);overflow:hidden}
-.mobility-visual-placeholder span{font-size:clamp(58px,7vw,112px);line-height:.82;letter-spacing:-.075em;font-weight:950;opacity:.12;white-space:nowrap;transform:translateX(-1.5%)}
-.mobility-visual-placeholder small{margin-top:22px;font-size:12px;letter-spacing:.42em;font-weight:900;opacity:.38}
+.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;align-items:center;justify-content:center;padding:34px 46px 102px;background:#f6f6f4;overflow:hidden}
+.mobility-visual-placeholder img{display:block;width:min(88%,560px);height:auto;object-fit:contain;filter:saturate(.96);transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.mobility-visual:hover .mobility-visual-placeholder img{transform:scale(1.025)}
+
+.official-brand{min-width:0!important;display:inline-flex;align-items:center}
+.official-brand img{display:block;width:112px;height:70px;object-fit:contain}
+.official-brand-footer{padding:8px 12px;background:#fff;border-radius:12px}
+.official-brand-footer img{width:145px;height:92px}
 .mobility-visual-label{position:absolute;left:28px;bottom:28px;background:#fff;padding:12px 16px;border-radius:999px;font-size:13px;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,.08)}
 
 .mobility-search-wrap{position:relative;z-index:5;margin-top:-72px;padding-bottom:20px}
@@ -193,6 +198,8 @@ main{animation:calenda-page-in .55s cubic-bezier(.22,1,.36,1) both}
 @media(max-width:720px){
   body{padding-bottom:66px}
   .rental-header .header-inner{min-height:68px}
+  .official-brand img{width:90px;height:56px}
+  .official-brand-footer img{width:132px;height:84px}
   .rental-nav a{padding:12px 18px!important}
   .mobility-hero{min-height:auto}
   .mobility-hero-copy{padding:46px 0 100px}
