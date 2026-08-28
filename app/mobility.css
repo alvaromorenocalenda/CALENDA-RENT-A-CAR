@@ -40,8 +40,8 @@
 .mobility-visual{position:relative;min-height:610px;background:#dfe2e2;overflow:hidden}
 .mobility-visual img{width:100%;height:100%;object-fit:cover;display:block}
 .mobility-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(245,244,239,.1),transparent 24%);pointer-events:none}
-.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;align-items:center;justify-content:center;padding:34px 46px 102px;background:#f6f6f4;overflow:hidden}
-.mobility-visual-placeholder img{display:block;width:min(88%,560px);height:auto;object-fit:contain;filter:saturate(.96);transition:transform .7s cubic-bezier(.22,1,.36,1)}
+.mobility-visual-placeholder{height:100%;min-height:610px;display:flex;align-items:center;justify-content:center;padding:22px 28px 96px;background:#e4e6e4;overflow:hidden;isolation:isolate}
+.mobility-visual-placeholder img{display:block;width:min(98%,650px);height:auto;object-fit:contain;mix-blend-mode:multiply;filter:contrast(1.025) saturate(1.02);transition:transform .7s cubic-bezier(.22,1,.36,1)}
 .mobility-visual:hover .mobility-visual-placeholder img{transform:scale(1.025)}
 
 .official-brand{min-width:0!important;display:inline-flex;align-items:center}
