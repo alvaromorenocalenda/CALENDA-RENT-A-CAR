@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { ArrowRight, Camera, CarFront, KeyRound, MapPin, Smartphone } from "lucide-react";
@@ -64,7 +65,9 @@ export default function HomePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={heroVehicle.imageUrl} alt={`${heroVehicle.brand} ${heroVehicle.model}`} />
               ) : (
-                <div className="mobility-visual-placeholder" aria-hidden="true"><span>CALENDA</span><small>RENT A CAR</small></div>
+                <div className="mobility-visual-placeholder">
+                  <Image src="/brand/calenda-rent-a-car-logo.webp" alt="Calenda Rent a Car" width={560} height={420} priority />
+                </div>
               )}
               {heroVehicle && <span className="mobility-visual-label">{heroVehicle.brand} {heroVehicle.model}</span>}
             </div>
