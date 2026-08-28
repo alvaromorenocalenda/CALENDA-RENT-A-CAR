@@ -25,14 +25,14 @@ export default function AppHeader() {
   };
 
   return (
-    <header className="site-header premium-header">
+    <header className="site-header rental-header">
       <div className="container header-inner">
-        <Link href="/" className="brand premium-brand" onClick={() => setOpen(false)}>
-          <span className="brand-mark"><CarFront size={21} strokeWidth={1.9} /></span>
-          <span className="brand-copy"><strong>CALENDA</strong><small>RENT A CAR</small></span>
+        <Link href="/" className="brand rental-brand" onClick={() => setOpen(false)}>
+          <span className="brand-mark"><CarFront size={20} /></span>
+          <span><strong>CALENDA</strong><small>RENT A CAR</small></span>
         </Link>
 
-        <nav className={`main-nav ${open ? "is-open" : ""}`}>
+        <nav className={`main-nav rental-nav ${open ? "is-open" : ""}`}>
           {links.map((item) => (
             <Link
               key={item.href}
@@ -54,15 +54,12 @@ export default function AppHeader() {
           {!loading && !user && (
             <>
               <Link href="/login" className="btn btn-ghost btn-small">Entrar</Link>
-              <Link href="/registro" className="btn btn-dark btn-small header-cta">Crear cuenta</Link>
+              <Link href="/registro" className="btn btn-primary btn-small">Crear cuenta</Link>
             </>
           )}
           {!loading && user && (
             <>
-              <Link href="/mi-cuenta" className="user-chip">
-                <span className="user-avatar"><UserRound size={15} /></span>
-                <span>{profile?.name?.split(" ")[0] || "Mi cuenta"}</span>
-              </Link>
+              <Link href="/mi-cuenta" className="user-chip"><UserRound size={16} /><span>{profile?.name?.split(" ")[0] || "Mi cuenta"}</span></Link>
               <button className="icon-button desktop-only" onClick={doLogout} title="Cerrar sesión"><LogOut size={17} /></button>
             </>
           )}
