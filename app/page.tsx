@@ -1,130 +1,100 @@
-import Link from "next/link";
-import { ArrowRight, Camera, CheckCircle2, KeyRound, MapPin, ShieldCheck, Smartphone, Sparkles } from "lucide-react";
-import Header from "@/components/Header";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Camera, KeyRound, MapPinned, ShieldCheck, Smartphone, TimerReset } from "lucide-react";
+import AppHeader from "@/components/AppHeader";
 import Footer from "@/components/Footer";
 
-const vehicles = [
-  { name: "Citroën C4 Cactus", type: "SUV urbano", seats: "5 plazas", fuel: "Gasolina", price: 39 },
-  { name: "Peugeot 208", type: "Compacto", seats: "5 plazas", fuel: "Gasolina", price: 35 },
-  { name: "Citroën Berlingo", type: "Furgoneta", seats: "5 plazas", fuel: "Diésel", price: 52 },
-];
+export default function HomePage() {
+  const router = useRouter();
+  const [city, setCity] = useState("Higuera la Real");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
 
-export default function Home() {
+  const search = () => {
+    const params = new URLSearchParams();
+    if (city) params.set("city", city);
+    if (start) params.set("start", start);
+    if (end) params.set("end", end);
+    router.push(`/vehiculos?${params.toString()}`);
+  };
+
   return (
-    <>
-      <Header />
+    <div className="page">
+      <AppHeader />
       <main>
         <section className="hero">
-          <div className="container hero-inner">
+          <div className="container hero-grid">
             <div className="hero-copy">
-              <span className="eyebrow"><Sparkles size={15} /> Alquiler sin esperas ni mostradores</span>
-              <h1>Reserva. Abre. Conduce. <span>Todo desde tu móvil.</span></h1>
-              <p>Elige tu coche, haz la reserva online y recógelo de forma autónoma. La llave te espera dentro y tú controlas el alquiler desde la app.</p>
+              <p className="eyebrow">Alquiler autónomo · 24/7</p>
+              <h1>Reserva. Abre. Conduce. <span>Sin esperas.</span></h1>
+              <p>Elige tu coche, haz la inspección desde el móvil, abre el vehículo desde la aplicación y devuelve las llaves cuando termines.</p>
               <div className="hero-points">
-                <span className="hero-point"><CheckCircle2 size={17} /> Reserva 100% online</span>
-                <span className="hero-point"><Smartphone size={17} /> Apertura desde el móvil</span>
-                <span className="hero-point"><Camera size={17} /> Inspección con fotos</span>
+                <span className="hero-point">Sin mostrador</span>
+                <span className="hero-point">Fotos antes y después</span>
+                <span className="hero-point">Apertura desde el móvil</span>
+                <span className="hero-point">Reserva por horas y días</span>
               </div>
             </div>
 
-            <div className="search-card">
-              <h2>Encuentra tu coche</h2>
-              <p>Indica cuándo lo necesitas y te mostramos los vehículos disponibles.</p>
-              <form className="form-grid" action="/vehiculos">
+            <div className="hero-card">
+              <h2>Busca tu coche</h2>
+              <p>Selecciona dónde y cuándo lo necesitas.</p>
+              <div className="search-grid">
                 <div className="field full">
-                  <label htmlFor="zona">Zona de recogida</label>
-                  <select id="zona" name="zona" defaultValue="higuera">
-                    <option value="higuera">Higuera la Real</option>
-                    <option value="fregenal">Fregenal de la Sierra</option>
-                    <option value="zafra">Zafra</option>
-                  </select>
+                  <label>Zona de recogida</label>
+                  <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Higuera la Real" />
                 </div>
                 <div className="field">
-                  <label htmlFor="inicio">Fecha de inicio</label>
-                  <input id="inicio" name="inicio" type="date" />
+                  <label>Inicio</label>
+                  <input className="input" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
                 </div>
                 <div className="field">
-                  <label htmlFor="horaInicio">Hora</label>
-                  <input id="horaInicio" name="horaInicio" type="time" defaultValue="10:00" />
+                  <label>Devolución</label>
+                  <input className="input" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
                 </div>
-                <div className="field">
-                  <label htmlFor="fin">Fecha de devolución</label>
-                  <input id="fin" name="fin" type="date" />
-                </div>
-                <div className="field">
-                  <label htmlFor="horaFin">Hora</label>
-                  <input id="horaFin" name="horaFin" type="time" defaultValue="18:00" />
-                </div>
-                <div className="field full">
-                  <button className="btn btn-primary btn-block" type="submit">Buscar vehículos <ArrowRight size={18} /></button>
-                </div>
-              </form>
+                <button className="btn btn-primary full" onClick={search}>Ver vehículos disponibles</button>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="section">
+        <section className="section section-white">
           <div className="container">
-            <div className="section-head">
-              <div>
-                <h2>Vehículos disponibles</h2>
-                <p>Primer catálogo de muestra. Después los vehículos, precios y disponibilidad saldrán directamente de Firebase.</p>
-              </div>
-              <Link href="/vehiculos" className="text-link">Ver todos →</Link>
+            <div className="section-title">
+              <p className="eyebrow">Cómo funcionará</p>
+              <h2>Todo el alquiler desde el teléfono</h2>
+              <p>El proceso está pensado para que el cliente pueda realizar una reserva completa sin tener que recoger llaves en una oficina.</p>
             </div>
-            <div className="vehicle-grid">
-              {vehicles.map((vehicle) => (
-                <article className="vehicle-card" key={vehicle.name}>
-                  <div className="vehicle-visual">
-                    <span className="vehicle-badge">● Disponible</span>
-                    <div className="car-shape" aria-hidden="true" />
-                  </div>
-                  <div className="vehicle-body">
-                    <div className="vehicle-title">
-                      <div><h3>{vehicle.name}</h3><span style={{ color: "#6b7280", fontSize: 13 }}>{vehicle.type}</span></div>
-                      <div className="vehicle-price">{vehicle.price} €<small>/ día</small></div>
-                    </div>
-                    <div className="vehicle-meta">
-                      <span>{vehicle.seats}</span><span>{vehicle.fuel}</span><span>Manual</span>
-                    </div>
-                    <Link href="/vehiculos" className="btn btn-dark btn-block">Ver disponibilidad</Link>
-                  </div>
-                </article>
-              ))}
+            <div className="process-grid">
+              <article className="process-card"><div className="process-number">1</div><h3>Reserva</h3><p>Elige vehículo, fecha y hora. La plataforma calcula el importe y crea la reserva.</p></article>
+              <article className="process-card"><div className="process-number">2</div><h3>Inspección</h3><p>Al llegar al coche haces las fotografías obligatorias del exterior, interior y cuadro.</p></article>
+              <article className="process-card"><div className="process-number">3</div><h3>Abre y conduce</h3><p>Con la reserva autorizada podrás abrir el coche desde el móvil y coger la llave del interior.</p></article>
+              <article className="process-card"><div className="process-number">4</div><h3>Devuelve</h3><p>Aparca en una zona válida, haz las fotos finales, deja la llave y cierra desde la aplicación.</p></article>
             </div>
           </div>
         </section>
 
-        <section className="section section-white" id="como-funciona">
+        <section className="section section-dark">
           <div className="container">
-            <div className="section-head">
-              <div>
-                <h2>Cómo funciona</h2>
-                <p>Un alquiler completo sin tener que quedar con nadie para recoger o devolver las llaves.</p>
-              </div>
+            <div className="section-title">
+              <p className="eyebrow">Diseñado para carsharing</p>
+              <h2>El software preparado para conectar el coche real</h2>
+              <p>La parte web ya separa reservas, inspecciones y administración de la futura integración telemática del vehículo.</p>
             </div>
-            <div className="steps">
-              <div className="step"><div className="step-number">1</div><h3>Reserva</h3><p>Elige vehículo, fecha y hora. Identificamos al conductor y confirmamos el pago.</p></div>
-              <div className="step"><div className="step-number">2</div><h3>Haz las fotos</h3><p>Al llegar, la aplicación te guía para fotografiar exterior, interior, kilómetros y combustible.</p></div>
-              <div className="step"><div className="step-number">3</div><h3>Abre desde el móvil</h3><p>Con una reserva válida aparece el botón de apertura. La llave física se encuentra dentro del vehículo.</p></div>
-              <div className="step"><div className="step-number">4</div><h3>Devuelve y cierra</h3><p>Aparca en la zona permitida, deja la llave dentro, realiza las fotos finales y cierra desde la app.</p></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section">
-          <div className="container">
-            <div className="feature-band">
-              <div>
-                <h2>Diseñado para alquilar con tranquilidad</h2>
-                <p><ShieldCheck size={16} style={{ verticalAlign: "middle" }} /> Registro de aperturas, ubicación GPS, fotos antes y después y control de cada reserva.</p>
-              </div>
-              <Link href="/registro" className="btn btn-primary">Crear mi cuenta <ArrowRight size={18} /></Link>
+            <div className="feature-grid">
+              <article className="feature-card"><div className="feature-icon"><Smartphone /></div><h3>Apertura remota</h3><p>La aplicación validará usuario, reserva y horario antes de enviar una orden al sistema telemático.</p></article>
+              <article className="feature-card"><div className="feature-icon"><Camera /></div><h3>Pruebas fotográficas</h3><p>Cada alquiler guarda fotos iniciales y finales asociadas al cliente, vehículo y reserva.</p></article>
+              <article className="feature-card"><div className="feature-icon"><ShieldCheck /></div><h3>Arranque autorizado</h3><p>La arquitectura contempla inmovilización fuera de la franja de reserva sin cortar nunca un vehículo en circulación.</p></article>
+              <article className="feature-card"><div className="feature-icon"><MapPinned /></div><h3>GPS y devolución</h3><p>La ficha del vehículo ya está preparada para guardar posición y zonas de devolución.</p></article>
+              <article className="feature-card"><div className="feature-icon"><TimerReset /></div><h3>Reservas por tiempo</h3><p>Fechas de inicio y fin, estados de alquiler y control de disponibilidad dentro de la misma plataforma.</p></article>
+              <article className="feature-card"><div className="feature-icon"><KeyRound /></div><h3>Llave dentro</h3><p>El cliente abre con el móvil, recoge la llave física y la vuelve a guardar antes de finalizar.</p></article>
             </div>
           </div>
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

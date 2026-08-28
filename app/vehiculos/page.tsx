@@ -1,54 +1,64 @@
-import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+"use client";
 
-const vehicles = [
-  { name: "Citroën C4 Cactus", type: "SUV urbano", seats: "5 plazas", fuel: "Gasolina", transmission: "Manual", price: 39, location: "Higuera la Real" },
-  { name: "Peugeot 208", type: "Compacto", seats: "5 plazas", fuel: "Gasolina", transmission: "Manual", price: 35, location: "Higuera la Real" },
-  { name: "Citroën Berlingo", type: "Furgoneta", seats: "5 plazas", fuel: "Diésel", transmission: "Manual", price: 52, location: "Fregenal de la Sierra" },
-  { name: "Renault Clio", type: "Compacto", seats: "5 plazas", fuel: "Gasolina", transmission: "Manual", price: 34, location: "Zafra" },
-  { name: "Seat Arona", type: "SUV", seats: "5 plazas", fuel: "Gasolina", transmission: "Manual", price: 45, location: "Zafra" },
-  { name: "Peugeot Partner", type: "Furgoneta", seats: "3 plazas", fuel: "Diésel", transmission: "Manual", price: 49, location: "Higuera la Real" },
-];
+import { useEffect, useMemo, useState } from "react";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { Search } from "lucide-react";
+import AppHeader from "@/components/AppHeader";
+import Footer from "@/components/Footer";
+import VehicleCard from "@/components/VehicleCard";
+import { db } from "@/lib/firebase";
+import type { Vehicle } from "@/lib/types";
 
 export default function VehiculosPage() {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [city, setCity] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDocs(query(collection(db, "vehicles"), orderBy("createdAt", "desc")));
+        setVehicles(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Vehicle, "id">) })).filter((v) => v.active !== false));
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const filtered = useMemo(() => vehicles.filter((v) => {
+    const text = `${v.brand} ${v.model} ${v.plate} ${v.city}`.toLowerCase();
+    return text.includes(search.toLowerCase()) && (!city || v.city === city);
+  }), [vehicles, search, city]);
+
+  const cities = [...new Set(vehicles.map((v) => v.city).filter(Boolean))];
+
   return (
-    <>
-      <Header />
-      <main>
-        <section className="page-hero">
-          <div className="container">
-            <h1>Encuentra tu vehículo</h1>
-            <p>Catálogo inicial de demostración. En la siguiente fase lo conectaremos a Firestore para gestionar disponibilidad real.</p>
+    <div className="page">
+      <AppHeader />
+      <main className="page-main">
+        <div className="container">
+          <div className="page-heading">
+            <div><p className="eyebrow">Flota</p><h1>Vehículos disponibles</h1><p>Elige un coche y selecciona la franja exacta de tu reserva.</p></div>
           </div>
-        </section>
-        <section className="section" style={{ paddingTop: 34 }}>
-          <div className="container">
-            <div className="filters">
-              <div className="field"><label>Zona</label><select defaultValue="all"><option value="all">Todas las zonas</option><option>Higuera la Real</option><option>Fregenal de la Sierra</option><option>Zafra</option></select></div>
-              <div className="field"><label>Desde</label><input type="date" /></div>
-              <div className="field"><label>Hasta</label><input type="date" /></div>
-              <div className="field"><label>Tipo</label><select><option>Todos</option><option>Compacto</option><option>SUV</option><option>Furgoneta</option></select></div>
-            </div>
-            <div className="vehicle-grid">
-              {vehicles.map((vehicle) => (
-                <article className="vehicle-card" key={vehicle.name}>
-                  <div className="vehicle-visual"><span className="vehicle-badge">● Disponible</span><div className="car-shape" aria-hidden="true" /></div>
-                  <div className="vehicle-body">
-                    <div className="vehicle-title">
-                      <div><h3>{vehicle.name}</h3><span style={{ color: "#6b7280", fontSize: 13 }}>{vehicle.type} · {vehicle.location}</span></div>
-                      <div className="vehicle-price">{vehicle.price} €<small>/ día</small></div>
-                    </div>
-                    <div className="vehicle-meta"><span>{vehicle.seats}</span><span>{vehicle.fuel}</span><span>{vehicle.transmission}</span></div>
-                    <Link href="/registro" className="btn btn-primary btn-block">Reservar vehículo</Link>
-                  </div>
-                </article>
-              ))}
+
+          <div className="panel" style={{ marginBottom: 22 }}>
+            <div className="panel-body form-grid">
+              <div className="field"><label>Buscar vehículo</label><div style={{ position: "relative" }}><Search size={17} style={{ position: "absolute", left: 13, top: 14, color: "#657287" }} /><input className="input" style={{ paddingLeft: 40 }} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Marca, modelo o matrícula" /></div></div>
+              <div className="field"><label>Zona</label><select className="select" value={city} onChange={(e) => setCity(e.target.value)}><option value="">Todas las zonas</option>{cities.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
             </div>
           </div>
-        </section>
+
+          {loading ? <div className="loading-screen"><div className="loader" /></div> : filtered.length ? (
+            <div className="vehicle-grid">{filtered.map((v) => <VehicleCard key={v.id} vehicle={v} />)}</div>
+          ) : (
+            <div className="panel"><div className="empty-state"><strong>No hay vehículos publicados</strong><span>En cuanto el administrador añada el primer coche aparecerá aquí.</span></div></div>
+          )}
+        </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -5,22 +5,84 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     match /users/{userId} {
-      allow create, read, update: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role == 'cliente';
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow update: if isAdmin() || (
+        signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.verificationStatus == resource.data.verificationStatus
+      );
       allow delete: if false;
     }
 
     match /vehicles/{vehicleId} {
       allow read: if true;
-      allow write: if false;
+      allow create, update: if isAdmin();
+      allow delete: if false;
     }
 
     match /bookings/{bookingId} {
-      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
-      allow read: if signedIn() && resource.data.userId == request.auth.uid;
-      allow update: if signedIn()
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pendiente'
+        && request.resource.data.paymentStatus == 'pendiente'
+        && request.resource.data.inspectionInitialComplete == false
+        && request.resource.data.inspectionFinalComplete == false;
+
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      allow update: if isAdmin() || (
+        signedIn()
         && resource.data.userId == request.auth.uid
-        && request.resource.data.userId == request.auth.uid;
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.vehicleId == resource.data.vehicleId
+        && request.resource.data.amount == resource.data.amount
+        && request.resource.data.deposit == resource.data.deposit
+        && request.resource.data.paymentStatus == resource.data.paymentStatus
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'initialPhotos',
+          'finalPhotos',
+          'inspectionInitialComplete',
+          'inspectionFinalComplete',
+          'status',
+          'cancellationReason',
+          'updatedAt'
+        ])
+        && (
+          request.resource.data.status == resource.data.status
+          || (
+            request.resource.data.status == 'cancelada'
+            && resource.data.status in ['pendiente', 'confirmada']
+          )
+        )
+      );
+      allow delete: if false;
+    }
+
+    match /availability/{bookingId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.bookingId == bookingId
+        && request.resource.data.status == 'reservada'
+        && getAfter(/databases/$(database)/documents/bookings/$(bookingId)).data.userId == request.auth.uid;
+      allow update: if isAdmin() || (
+        signedIn()
+        && get(/databases/$(database)/documents/bookings/$(bookingId)).data.userId == request.auth.uid
+        && request.resource.data.bookingId == resource.data.bookingId
+        && request.resource.data.vehicleId == resource.data.vehicleId
+        && request.resource.data.startAt == resource.data.startAt
+        && request.resource.data.endAt == resource.data.endAt
+        && request.resource.data.status == 'cancelada'
+      );
       allow delete: if false;
     }
   }
